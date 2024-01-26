@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Approval Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+        }
+
+        .btn-approve,
+        .btn-reject {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-reject {
+            background-color: #ff3333;
+            margin-left: 10px;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 20px;
+          }
+        
+          ul li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 10px;
+          }
+        
+          ul li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            top: 5px;
+          }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Old Property approval page</h1>
+        <ul>
+            <li> Old Property Store Head </li>
+             <li>Garage Technician</li> 
+             <li>Property Control Employee 1</li>
+             <li>Property Control Employee 2 </li>
+            <li> Property Management Service Head</li>
+             </ul>
+        <div id="notifications"></div>
+
+       
+        <script>
+            
+            var socket = new WebSocket('ws://' + window.location.host + '/ws/notifications/');
+
+            socket.onmessage = function(event) {
+               
+                var notification = JSON.parse(event.data);
+                var notificationsContainer = document.getElementById('notifications');
+                notificationsContainer.innerHTML += '<p>' + notification + '</p>';
+            };
+        </script>
+        <form>
+            <div class="form-group">
+                <label for="approver-name">Approver Name:</label>
+                <input type="text" id="approver-name" required>
+            </div>
+            <div class="form-group">
+                <label for="date-of-approval">Date of Approval:</label>
+                <input type="date" id="date-of-approval" required>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn-approve">Approve</button>
+                <button type="button" class="btn-reject">Reject</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        var approvalCount = 0;
+
+document.querySelector('.btn-approve').addEventListener('click', function() {
+  var approverName = document.getElementById('approver-name').value;
+  var dateOfApproval = document.getElementById('date-of-approval').value;
+
+  if (approverName && dateOfApproval) {
+    approvalCount++;
+
+    if (approvalCount <= 5) {
+      alert('Property Approved by ' + approverName + ' on ' + dateOfApproval + '. Proceeding to the next approval.');
+    } else {
+      // All approvals completed
+      var successMessage = document.createElement('p');
+      successMessage.innerHTML = 'Approval successful &#10004;';
+      successMessage.style.color = 'green';
+      document.getElementById('notifications').appendChild(successMessage);
+    }
+  } else {
+    alert('Please enter the Approver Name and Date of Approval.');
+  }
+});
+
+document.querySelector('.btn-reject').addEventListener('click', function() {
+  var approverName = document.getElementById('approver-name').value;
+  var dateOfApproval = document.getElementById('date-of-approval').value;
+
+  if (approverName && dateOfApproval) {
+    alert('Property Rejected by ' + approverName + ' on ' + dateOfApproval);
+  } else {
+    alert('Please enter the Approver Name and Date of Approval.');
+  }
+});
+    </script>
+    {% block content %}
+
+  <!-- Your existing HTML content -->
+
+  {% for notification in notifications %}
+      {% if notification.source == 'dashboard/return.html' %}
+          <div>
+              <h4>{{ notification.message }}</h4>
+              <p>{{ notification.timestamp }}</p>
+              <p>This notification is from user</p>
+          </div>
+      {% else %}
+          <div>
+              <h4>{{ notification.message }}</h4>
+              <p>{{ notification.timestamp }}</p>
+          </div>
+      {% endif %}
+  {% empty %}
+      <p>No new notifications.</p>
+  {% endfor %}
+
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,281 @@
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static '/style.css' %}">
+  <link rel="stylesheet" href="{% static '/product.css' %}">
+ <style>
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .table thead th {
+    vertical-align: middle;
+  }
+
+  .table tbody td {
+    vertical-align: middle;
+  }
+
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fa;
+  }
+
+  .table-primary {
+    background-color: #cce5ff;
+    color: #004085;
+  }
+
+  .table-secondary {
+    background-color: #e2e3e5;
+    color: #383d41;
+  }
+
+  .table-primary a,
+  .table-secondary a {
+    color: #fff;
+  }
+
+    /* Logo and navbar container */
+    .navbar-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Logo in the middle */
+    .navbar-brand {
+      height: 50px; /* Adjust logo height */
+    }
+
+    /* Dashboard link */
+    .navbar-nav .nav-link.dashboard-link {
+      margin-left: 20px; /* Adjust the gap between the logo and dashboard link */
+    }
+
+    /* Common link styles */
+    .navbar-nav .common-link {
+      position: relative;
+      color: #fff;
+      padding-right: 10px; /* Adjust right padding for hover effect */
+      padding-left: 10px; /* Adjust left padding for hover effect */
+    }
+
+    .navbar-nav .common-link::before {
+      content: "";
+      position: absolute;
+      width: 0;
+      height: 2px;
+      background-color: #fff;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: width 0.3s ease-in-out;
+    }
+
+    .navbar-nav .common-link:hover::before {
+      width: 100%;
+    }
+
+    /* Hamburger icon */
+    .navbar-toggler {
+      border-color: #fff;
+      background-color: transparent; /* Remove background color */
+      padding: 0.25rem 0.5rem; /* Adjust padding for a better appearance */
+      transition: background-color 0.3s ease-in-out; /* Add smooth transition */
+    }
+
+    .navbar-toggler:hover {
+      background-color: rgba(255, 255, 255, 0.2); /* Add hover background color */
+    }
+
+    /* Hamburger icon animation */
+    .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
+      transform: translateY(6px) rotate(45deg);
+    }
+
+    .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+    .diamond-shape {
+      position: relative;
+      transform: rotate(45deg);
+      overflow: hidden;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .diamond-shape::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transform: rotate(-45deg);
+      background-image: linear-gradient(to bottom, #e3e3e3, #ffffff);
+      z-index: -1;
+      opacity: 0.9;
+    }
+    
+    .diamond-shape h4,
+    .diamond-shape h3 {
+      transform: rotate(-45deg);
+      margin: 0;
+      position: relative;
+      z-index: 1;
+    }
+    
+      .custom-card-body {
+        max-width: 100px;
+        margin: 0 auto;
+      }
+    
+    
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-info bg-success">
+    <div class="container">
+      <div class="navbar-container">
+        <a class="navbar-brand text-info" href="{% url 'dashboard-mytemplate' %}">
+          <img src="{% static 'logo.png' %}" height="50px" width="50px">
+        </a>
+      </div>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav">
+          <li class="nav-active">
+            <a class="nav-link text-white dashboard-link" aria-current="page" href="{% url 'dashboard-mytemplate' %}">Dashboard</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link text-white common-link" aria-current="page" href="profile.html">Admin Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white common-link" href="{% url 'user-logout' %}">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Toggle navigation menu on hamburger icon click
+      $('.navbar-toggler').click(function() {
+        $('.navbar-collapse').toggleClass('show');
+      });
+    });
+
+  </script>
+    <div class="container">
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        Information
+                    </div>
+                    <div class="card-body">
+                        <marquee behavior="" direction="">
+                            <h3 class="my-4">Dilla university Inventory management system</h3>
+                        </marquee>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        Statistics
+                    </div>
+                        
+                          </div>
+                        </div>
+                       </div>
+               </div>
+               <div class="container">
+                <div class="row my-4">
+                  <div class="col-md-12">
+                    <div class="table-responsive">
+                      <table id="userTable" class="table table-striped table-bordered">
+                        <thead class="bg-success text-white">
+                          <tr>
+                            <th scope="col">Firstname</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Address</th>
+                            <th scope="col">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for worker in workers %}
+                            <tr>
+                              <td>{{ worker.username }}</td>
+                              <td>{{ worker.email }}</td>
+                              <td>{{ worker.profile.address }}</td>
+                              <td>
+                                <a class="btn btn-info btn-sm" href="{% url 'dashboard-users_detail' worker.id %}">Show me</a>
+                              </td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                  var table = document.getElementById("userTable");
+                  var rows = table.getElementsByTagName("tr");
+                  for (var i = 0; i < rows.length; i++) {
+                    rows[i].classList.add(i % 2 === 0 ? "table-primary" : "table-secondary");
+                  }
+                });
+              </script>
+
+   
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-pzjwraPgVQl+9Hd2Z9Mf8cW3n3nK2l2GpWPO1NfP2v5wVtZ5bH/f12Nf8N1wGQ7Y" crossorigin="anonymous"></script>
+    <footer class="footer" style="background-color: green;">
+      <div class="container text-center">
+        <span class="text-white">
+          <strong>Dilla University Inventory System</strong><br>
+          Owner: Gizachew Berako<br>
+          Phone Number: <a href="tel:+251900991412" class="text-white"><i class="fas fa-phone-alt"></i> +251900991412</a><br>
+          Email: <a href="mailto:gizachewberako2014@gmail.com" class="text-white"><i class="fas fa-envelope"></i> gizachewberako2014@gmail.com</a><br>
+          Address: Dilla, Mola Golja<br>
+          <i class="fas fa-clipboard" id="phone-icon" style="cursor: pointer;"></i>
+        </span>
+      </div>
+    </footer>
+      
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $("#phone-icon").click(function() {
+        var phoneNumber = "+251900991412";
+        var dummyElement = $("<input>");
+        $("body").append(dummyElement);
+        dummyElement.val(phoneNumber).select();
+        document.execCommand("copy");
+        dummyElement.remove();
+        alert("Phone number copied to clipboard: " + phoneNumber);
+      });
+    });
+  </script>
+</body>
+</html>

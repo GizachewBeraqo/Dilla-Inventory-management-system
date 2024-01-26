@@ -1,0 +1,723 @@
+{% if user.is_staff and user.is_superuser %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static '/style.css' %}">
+  <link rel="stylesheet" href="{% static '/product.css' %}">
+  <style>
+    /* Logo and navbar container */
+    .navbar-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Logo in the middle */
+    .navbar-brand {
+      height: 50px; /* Adjust logo height */
+    }
+
+    /* Dashboard link */
+    .navbar-nav .nav-link.dashboard-link {
+      margin-left: 20px; /* Adjust the gap between the logo and dashboard link */
+    }
+
+    /* Common link styles */
+    .navbar-nav .common-link {
+      position: relative;
+      color: #fff;
+      padding-right: 10px; /* Adjust right padding for hover effect */
+      padding-left: 10px; /* Adjust left padding for hover effect */
+    }
+
+    .navbar-nav .common-link::before {
+      content: "";
+      position: absolute;
+      width: 0;
+      height: 2px;
+      background-color: #fff;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: width 0.3s ease-in-out;
+    }
+
+    .navbar-nav .common-link:hover::before {
+      width: 100%;
+    }
+
+    /* Hamburger icon */
+    .navbar-toggler {
+      border-color: #fff;
+      background-color: transparent; /* Remove background color */
+      padding: 0.25rem 0.5rem; /* Adjust padding for a better appearance */
+      transition: background-color 0.3s ease-in-out; /* Add smooth transition */
+    }
+
+    .navbar-toggler:hover {
+      background-color: rgba(255, 255, 255, 0.2); /* Add hover background color */
+    }
+
+    /* Hamburger icon animation */
+    .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
+      transform: translateY(6px) rotate(45deg);
+    }
+
+    .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+    .diamond-shape {
+      position: relative;
+      transform: rotate(45deg);
+      overflow: hidden;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .diamond-shape::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transform: rotate(-45deg);
+      background-image: linear-gradient(to bottom, #e3e3e3, #ffffff);
+      z-index: -1;
+      opacity: 0.9;
+    }
+    
+    .diamond-shape h4,
+    .diamond-shape h3 {
+      transform: rotate(-45deg);
+      margin: 0;
+      position: relative;
+      z-index: 1;
+    }
+    footer {
+      background-color: green;
+      padding: 20px;
+      color: white; /* optional: set text color to white for better visibility */
+    }
+    .custom-select-sm {
+      width: 150px; /* Adjust the width as needed */
+    }
+    .cover-image-container {
+      position: relative;
+      width: 100%;
+      height: 0;
+      padding-bottom: 40%; /* Adjust the aspect ratio of the image here */
+      overflow: hidden;
+    }
+    
+    .cover-image-container img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-info bg-success">
+    <div class="container">
+      <div class="navbar-container">
+        <a class="navbar-brand text-info" href="{% url 'dashboard-mytemplate' %}">
+          <img src="{% static 'logo.png' %}" height="50px" width="50px">
+        </a>
+      </div>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav">
+          <li class="nav-active">
+            <a class="nav-link text-white dashboard-link" aria-current="page" href="{% url 'dashboard-mytemplate' %}">Dashboard</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link text-white common-link" aria-current="page" href="{% url 'user-profile' %}">Admin Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white common-link" href="{% url 'user-logout' %}">Logout</a>
+          </li>
+        </ul>
+      </div>
+      {% if request.user.is_authenticated %}
+      <select id="service-provided-select" class="form-select ml-auto custom-select-sm">
+        <option selected disabled>SERVICES</option>
+        <option value="{% url 'dashboard-approval' %}">Model 20 Fixed Approval</option>
+        <option value="{% url 'dashboard-napproval' %}">Model 20 Non-Fixed Approval</option>
+        <option value="{% url 'dashboard-handoverapp' %}">Handover Approval</option>
+        <option value="{% url 'dashboard-old' %}"> old property approval</option>
+        <option value="{% url 'create_superuser' %}"> create Superuser</option>
+        <option value="{% url 'delete_superuser' %}"> Delete Superuser</option>
+      </select>
+    {% endif %}
+  </div>
+    </div>
+  </nav>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Toggle navigation menu on hamburger icon click
+      $('.navbar-toggler').click(function() {
+        $('.navbar-collapse').toggleClass('show');
+      });
+    });
+
+  </script>
+  <div class="container">
+    <div class="row mt-4">
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card header bg-success text-white">
+            Information
+          </div>
+          <div class="card-body">
+            <marquee behavior="" direction="">
+              <h3 class="my-4">Dilla university Inventory management system</h3>
+            </marquee>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card header bg-success text-white">
+            Statistics
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4 p-3">
+                <a class="text-decoration-none text-dark" href="{% url 'dashboard-users' %}">
+                  <div class="card my-card diamond-shape text-center p-3">
+                    <h4>Users<i class="fa fa-users"></i></h4>
+                    <h3>5</h3>
+                  </div>
+                </a>
+              </div>
+              <div class="col-md-4 p-3">
+                <a class="text-decoration-none text-dark" href="{% url 'dashboard-product' %}">
+                  <div class="card my-card diamond-shape text-center p-3">
+                    <h4>Product<i class="fa fa-inventory-2"></i></h4>
+                    <h3>5</h3>
+                  </div>
+                </a>
+              </div>
+              <div class="col-md-4 p-3">
+                <a class="text-decoration-none text-dark" href="{% url 'dashboard-order' %}">
+                  <div class="card my-card diamond-shape text-center p-3">
+                    <h4>Requests<i class="fas fa-shipping-fast"></i></h4>
+                    <h3>5</h3>
+                  </div>
+                </a>
+              </div>
+              <div class="col-md-4 p-3">
+                <a class="text-decoration-none text-dark" href="{% url 'dashboard-handoverer' %}">
+                  <div class="card my-card diamond-shape text-center p-3">
+                    <h4>HandOver<i class="fas fa-shipping-fast"></i></h4>
+                    <h3>5</h3>
+                  </div>
+                </a>
+              </div>
+              <div class="col-md-4 p-3">
+                <a class="text-decoration-none text-dark" href="{% url 'dashboard-model20request' %}">
+                  <div class="card my-card diamond-shape text-center p-3">
+                    <h4>Model20non-fixedRequest<i class="fas fa-shipping-fast"></i></h4>
+                    <h3>5</h3>
+                  </div>
+                </a>
+              </div>
+              <div class="col-md-4 p-3">
+                <a class="text-decoration-none text-dark" href="{% url 'dashboard-fixed' %}">
+                  <div class="card my-card diamond-shape text-center p-3">
+                    <h4>Model 20 fixed Request<i class="fas fa-shipping-fast"></i></h4>
+                    <h3>5</h3>
+                  </div>
+                </a>
+              </div>
+              <div class="col-md-4 p-3">
+                <a class="text-decoration-none text-dark" href="{% url 'dashboard-return' %}">
+                  <div class="card my-card diamond-shape text-center p-3">
+                    <h4>Old Property Return<i class="fas fa-shipping-fast"></i></h4>
+                    <h3>5</h3>
+                  </div>
+                </a>
+              </div>
+    </div>
+        </div>
+       
+        </div>
+        </div>
+</div>
+<div class="container">
+    <div class="row my-5">
+      <div class="col-md-6">
+        <div class="bg-white">
+          <canvas id="myChart2" width="400" height="300"></canvas>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+          const ctx = document.getElementById('myChart2');
+          new Chart(ctx, {
+            type: 'pie',
+            data: {
+              labels: [{% for order in orders %}'{{ order.productname }}',{% endfor %}],
+              datasets: [{
+                label: 'Orders',
+                data: [{% for order in orders %}{{ order.NumberofItems }},{% endfor %}],
+                backgroundColor:[
+                'rgba(255,159,64,1)',
+                'rgba(255,99,132,1)',
+                'rgba(54,162,235,1)',
+                'rgba(255,206,86,1)',
+                'rgba(75,192,192,1)',
+                'rgba(153,102,255,1)',
+                'rgba(255,159,64,1)',
+                'rgba(211,99,12,1)',
+                'rgba(234,16,235,1)',
+                'rgba(255,206,86,1)',
+                'rgba(34,142,192,1)',
+                'rgba(153,102,255,1)',
+                'rgba(255,159,64,1)',
+                
+                
+                
+                ],
+                borderColor:[
+                'rgba(255,99,132,1)',
+                'rgba(54,162,235,1)',
+                'rgba(255,206,86,1)',
+                'rgba(75,192,192,1)',
+                'rgba(153,102,255,1)',
+                'rgba(255,159,64,1)',
+                'rgba(211,99,12,1)',
+                'rgba(234,16,235,1)',
+                'rgba(255,206,86,1)',
+                'rgba(34,142,192,1)',
+                'rgba(153,102,255,1)',
+                'rgba(255,159,64,1)',
+                
+                
+                
+                ],
+                borderWidth: 1
+              }]
+            },
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+        </script>
+      </div>
+      <div class="col-md-6">
+        <div class="bg-white">
+          <canvas id="myChart1" width="400" height="300"></canvas>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+          const ct = document.getElementById('myChart1');
+          new Chart(ct, {
+            type: 'bar',
+            data: {
+              labels: [{% for product in products %}'{{ product.productname }}',{% endfor %}],
+              datasets: [{
+                label: 'Products',
+                data: [{% for product in products %}{{ product.quantity }},{% endfor %}],
+                backgroundColor:[
+                'rgba(255,206,86,1)',
+                'rgba(75,192,192,1)',
+                'rgba(153,102,255,1)',
+                'rgba(255,159,64,1)',
+                'rgba(211,99,12,1)',
+                'rgba(234,16,235,1)',
+                'rgba(255,206,86,1)',
+                'rgba(34,142,192,1)',
+                'rgba(153,102,255,1)',
+                'rgba(255,159,64,1)',
+                
+                
+                ],
+                borderColor:[
+                'rgba(255,159,64,1)',
+                'rgba(255,99,132,1)',
+                'rgba(54,162,235,1)',
+                'rgba(255,206,86,1)',
+                'rgba(75,192,192,1)',
+                'rgba(153,102,255,1)',
+                'rgba(255,159,64,1)',
+                'rgba(211,99,12,1)',
+                'rgba(234,16,235,1)',
+                'rgba(255,206,86,1)',
+                'rgba(34,142,192,1)',
+                'rgba(153,102,255,1)',
+                'rgba(255,159,64,1)',
+                'rgba(211,99,12,1)',
+                'rgba(234,16,235,1)',
+                'rgba(255,206,86,1)',
+                'rgba(34,142,192,1)',
+                'rgba(153,102,255,1)',
+                'rgba(255,159,64,1)',
+                ],
+                borderWidth: 1
+              }]
+            },
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+        </script>
+</div>
+</div>
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script>
+      const selectElement = document.getElementById("service-provided-select");
+      selectElement.addEventListener("change", function() {
+        const selectedOption = selectElement.options[selectElement.selectedIndex].value;
+        if (selectedOption) {
+          window.location.href = selectedOption;
+        }
+      });
+    </script>
+  
+    
+    <footer class="footer" style="background-color: green;">
+      <div class="container text-center">
+        <span class="text-white">
+          <strong>Dilla University Inventory System</strong><br>
+          Owner: Gizachew Berako<br>
+          Phone Number: <a href="tel:+251900991412" class="text-white"><i class="fas fa-phone-alt"></i> +251900991412</a><br>
+          Email: <a href="mailto:gizachewberako2014@gmail.com" class="text-white"><i class="fas fa-envelope"></i> gizachewberako2014@gmail.com</a><br>
+          Address: Dilla, Mola Golja<br>
+          <i class="fas fa-clipboard" id="phone-icon" style="cursor: pointer;"></i>
+        </span>
+      </div>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $("#phone-icon").click(function() {
+          var phoneNumber = "+251900991412";
+          var dummyElement = $("<input>");
+          $("body").append(dummyElement);
+          dummyElement.val(phoneNumber).select();
+          document.execCommand("copy");
+          dummyElement.remove();
+          alert("Phone number copied to clipboard: " + phoneNumber);
+        });
+      });
+    </script>
+  </body>
+</html>
+ 
+
+{% else %}
+    {% include 'supporter/users_index.html' %}
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

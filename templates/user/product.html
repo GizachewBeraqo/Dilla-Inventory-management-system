@@ -1,0 +1,203 @@
+{% load static %}
+{% load crispy_forms_tags %}
+<!doctype html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+ <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+<title>{% block title %}{% endblock %}</title>
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+<link rel="stylesheet" href="{% static '/style.css' %}">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-info bg-success">
+    <div class="container">
+      <a class="navbar-brand text-info" href="{% url 'dashboard-mytemplate' %}"><img src="{% static 'logo.png' %}" height="80px" width="80px"></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-active">
+            <a class="nav-link text-white" aria-current="page" href="{% url 'dashboard-mytemplate' %}">Dashboard</a>
+          </li>
+          
+        </ul>
+
+        <ul class="navbar-nav ml-auto ">
+            <li class="nav-active">
+              <a class="nav-link text-white" aria-current="page" href="profile.html">Admin Profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="{% url 'user-logout' %}">Logout</a>
+            </li>
+          </ul>
+        
+      </div>
+    </div>
+  </nav>
+<div class="container">
+<div class="row mt-4">
+<div class="col-md-4">
+    <div class="card">
+        <div class="card header bg-success text-white">
+Information 
+        </div>
+<div class="card-body">
+    <marquee behavior="" direction="">
+        <h3 class="my-4">Dilla university Inventory management system</h3>
+    </marquee>
+</div>
+    </div>
+   
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card header bg-success text-white">
+    Statistics
+            </div>
+    <div class="card-body">
+       <div class="row">
+        <div class="col-md-4 p-3">
+            <a class="text-decoration-none text-dark" href= "{% url 'dashboard-users' %}">
+                <div class="card my-card text-center p-3">
+                    <h4>Staff<i class="fa fa-users"></i></h4>
+                    <h3>5</h3>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4 p-3">
+          <a class="text-decoration-none text-dark" href= "{% url 'dashboard-product' %}">
+              <div class="card my-card text-center p-3">
+                  <h4>Products<i class="fa fa-inventory-2"></i></h4>
+                  <h3>5</h3>
+              </div>
+          </a>
+      </div>
+      <div class="col-md-4 p-3">
+        <a class="text-decoration-none text-dark" href= "{% url 'dashboard-order' %}">
+            <div class="card my-card text-center p-3">
+                <h4>Orders<i class="fas fa-shipping-fast"></i></h4>
+                <h3>5</h3>
+            </div>
+        </a>
+    </div>
+       </div>
+    </div>
+        </div>
+       
+        </div>
+        </div>
+</div>
+<div class="container">
+  <div class="row my-4">
+    <div class="col-md-4">
+      <div class="border bg-white p-3">
+        <h4>Add products below</h4>
+        <form method="POST" action="{% url 'dashboard-product' %}" id="add-product-form">
+          {% csrf_token %}
+          {{ form|crispy }}
+          <div class="text-center">
+            <input class="btn btn-success btn-block" type="submit" value="addproduct">
+          </div>
+        </form>
+      </div>
+    </div>
+    
+        <table class="table bg-white ">
+          <thead class="bg-success">
+            <tr class="text-white p-3">
+
+            <th scope="col"></th>
+  
+ <th scope="col">productName</th>
+          <th scope="col">model</th>
+          <th scope="col">serialNo</th>
+          <th scope="col">Category</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">unitprice</th>
+          <th scope="col">totalprice</th>
+          <th scope="col">Activity</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <th scope="row"></th>
+          <td>{{ item.productname }}</td>
+          <td>{{ item.model }}</td>
+          <td>{{ item.serialNo }}</td>
+          <td>{{ item.category }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.unitprice }}</td>
+          <td>{{ item.totalprice }}</td>
+          <td>
+            <a class="btn btn-info btn-sm" href="{% url 'dashboard-product_update' item.id %}">Edit</a>
+<a class="btn btn-danger btn-sm" href="{% url 'dashboard-product_delete' item.id %}">Delete</a>
+          </td>
+        </tr>
+         {% endfor %}
+        <tr>
+          <th scope="row"></th>
+          
+          <td></td>
+        </tr>
+        <tr>
+          <th scope="row"></th>
+          <td>
+            
+
+          </td>
+        </tr>
+      </tbody>
+    
+    </table>
+  
+    </div>
+    
+    </div>
+    
+    
+
+</div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script>
+  document.getElementById("add-product-form").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent the default form submission
+    var form = event.target;
+    var formData = new FormData(form);
+
+    fetch(form".action", {
+      method: form.method,
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Handle the response data
+      console.log(data);
+      // Reload the page or update the product table with the new data
+    })
+    .catch(error => {
+      // Handle any errors
+      console.error(error);
+    });
+  });
+</script>
+</body>
+</html>

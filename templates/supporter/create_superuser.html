@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Superuser</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+ <style>
+    .container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f2f2f2;
+        border-radius: 5px;
+      }
+      
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      
+      label {
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      
+      input[type="text"],
+      input[type="email"],
+      input[type="password"] {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+      
+      input[type="submit"] {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      
+      input[type="submit"]:hover {
+        background-color: #45a049;
+      }
+      .create-button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+  
+      .create-button:hover {
+        background-color: #45a049;
+      }
+
+ </style>
+</head>
+<body><div class="container">
+  <h1>Create Superuser</h1>
+  <form id="createSuperuserForm" action="{% url 'create_superuser' %}" method="POST">
+    {% csrf_token %}
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+  </form>
+  <button class="create-button" onclick="submitForm()">Create</button>
+</div>
+
+<script>
+  function submitForm() {
+    // Get the form reference
+    var form = document.getElementById("createSuperuserForm");
+    
+    // Create a new FormData object and populate it with form data
+    var formData = new FormData(form);
+    
+    // Send a POST request to your Django backend
+    fetch("{% url 'create_superuser' %}", {
+      method: "POST",
+      body: formData
+    })
+    .then(response => {
+      if (response.ok) {
+        // Handle successful form submission
+        alert("Superuser created successfully!");
+        // Redirect to another page if desired
+        window.location.href = "{% url 'dashboard-mytemplate' %}";
+      } else {
+        // Handle form submission errors
+        alert("Error creating superuser. Please try again.");
+      }
+    })
+    .catch(error => {
+      // Handle any network or server errors
+      alert("An error occurred. Please try again later.");
+    });
+  }
+</script>
+</body>
+</html>
+{% if error %}
+  <p class="error-message">{{ error }}</p>
+{% endif %}
